@@ -1,0 +1,24 @@
+{
+  "name": "sock-hook",
+  "version": "1.0.0",
+  "description": "An API hook to send data from an endpoint to a socket server.",
+  "main": "server.js",
+"github":"https://github.com/ianfoose/sock-hook.git",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "websockets",
+    "sockets",
+    "API",
+    "REST",
+    "webhook"
+  ],
+  "author": "Ian Foose",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.2",
+    "wicker": "^1.0.1"
+  }
+}
