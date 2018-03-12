@@ -62,18 +62,18 @@ Then access the socket server and forward the data.
 ```js
 var sock = require('sock-hook');
 
+var server = sock.createServer({port: 80},{port:8080});
+
 // router object
-var router = sock.getRouter();
+var router = server.router;
 
 // socket server object
-var socketServer = sock.getSocketServer();
-
-sock.createServer({port: 80},{port:8080});
+var socketServer = server.socketServer.wicker;
 
 // route
 router.post('/send',function(req,res) {
 	// send to all connections
-  socketServer.sendToAll(req.body);
+	socketServer.sendToAll(req.body);
 });
 ```
 
