@@ -34,7 +34,7 @@ module.exports.createServer = function(apiOptions, socketOptions) {
 
 		if(apiOptions.ssl) { // https
 			var https = require('https');
-			apiServer = https.createServer(options, app).listen(apiPort);
+			apiServer = https.createServer(apiOptions.ssl, app).listen(apiPort);
 		} else { // http
 			var http = require('http');
 			apiServer = http.createServer(app).listen(apiPort);
