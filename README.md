@@ -74,6 +74,7 @@ var socketServer = server.socketServer.wicker;
 router.post('/send',function(req,res) {
 	// send to all connections
 	socketServer.sendToAll(req.body);
+	res.sendStatus(200);
 });
 ```
 
