@@ -42,8 +42,8 @@ var fs = require('fs');
 
 // ssl file options
 var options = {
-  crt: fs.readFileSync(<path_to_crt>.crt,'utf8'),
-  key: fs.readFileSync(<path_to_key>.key,'utf8'),
+  crt: fs.readFileSync('<path_to_crt>.crt','utf8'),
+  key: fs.readFileSync('<path_to_key>.key','utf8'),
   ca: fs.readFileSync('<path_to_chain>.crt','utf8')
 }
 
