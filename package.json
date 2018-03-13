@@ -1,6 +1,6 @@
 {
   "name": "sock-hook",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "An API hook to send data from an endpoint to a socket server.",
   "main": "sock-hook.js",
 "github":"https://github.com/ianfoose/sock-hook.git",
@@ -19,6 +19,6 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.16.2",
-    "wicker": "^1.0.1"
+    "wicker": "^1.0.9"
   }
 }
