@@ -43,12 +43,11 @@ var fs = require('fs');
 // ssl file options
 var options = {
   crt: fs.readFileSync('<path_to_crt>.crt','utf8'),
-  key: fs.readFileSync('<path_to_key>.key','utf8'),
-  ca: fs.readFileSync('<path_to_chain>.crt','utf8')
+  key: fs.readFileSync('<path_to_key>.key','utf8')
 }
 
 // first object is api config, second is socket server config
-sock.createServer({port: 80, ssl: options},{port:8080, ssl:options});
+sock.createServer({port: 80, ssl: options}, {port:8080, ssl:options});
 ```
 
 ### Routes
@@ -62,7 +61,7 @@ Then access the socket server and forward the data.
 ```js
 var sock = require('sock-hook');
 
-var server = sock.createServer({port: 80},{port:8080});
+var server = sock.createServer({port: 80}, {port:8080});
 
 // router object
 var router = server.router;
