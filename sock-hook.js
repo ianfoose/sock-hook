@@ -1,68 +1,142 @@
-
 /*
 Sock-Hook
 
 A webhook for a socket based broadcasting server
 
-Copyright 2018 Ian Foose
+Copyright 2018 Ian Foose, Foose Industries.
+*/
+
+/*
+
+config options:
+
+{
+	"socket_server": {
+		"port": 8080,
+		"ssl": {
+			"crt": "",
+			"key": "",
+			"ca": "<optional>"
+		}
+	},
+	"api_server": {
+		"port": 80,
+		"ssl": {
+			"crt": "",
+			"key": "",
+			"ca": "<optional>"
+		}
+	}
+}
+
 */
 
 // creates the api and socket server(s)
-module.exports.createServer = function(apiOptions, socketOptions) {
-	// requires
-	var wicker = require('wicker');
+module.exports.createServer = function(options) {
+	// dependencies
+	const wicker = require('wicker');
+	const express = require('express');
+	const bodyParser = require('body-parser');
+	const fs = require('fs');
+	
+	// default configs
+	var defaultSocketPort = 8080;
+	var defaultAPIPort = 80;
 
-	// config
-	var apiPort = 80;
-	var socketPort = 8080;
-	var socketSSL;
+	// server options
+	var socketOptions = options['socket_server'] || { port: defaultSocketPort };
+	var apiOptions = options['api_server'] || { port: defaultAPIPort };
 
+	// servers
 	var apiServer;
 	var socketServer;
 
 	// Express
-	var express = require('express');
 	var app = express();
-	var bodyParser = require('body-parser');
 	var router = express.Router();
 	app.use(bodyParser.urlencoded({ extended: true }));
 
+	function readConfigFile(key, config) {
+		if(config[key]) {
+	        let filePath = config[key];
+
+	        // check if config file exists
+	        if(fs.existsSync(filePath)) {
+	            config[key] = fs.readFileSync(filePath);
+	        } else {
+	            throw new Error(`File, ${filePath}, not found!!`);
+	        }
+	    }
+	    return config;
+	}
+
+	// express API options
 	if(apiOptions) {
-		if(apiOptions.port && !isNaN(apiOptions.port)) {
-			apiPort = apiOptions.port;
+		if(apiOptions.port) {
+			if(apiOptions.port && isNaN(apiOptions.port)) {
+				throw new Error('API port must be numerical!!');
+			} 
+		} else {
+			apiOptions.port = defaultAPIPort;
 		}
 
 		if(apiOptions.ssl) { // https
-			var https = require('https');
-			apiServer = https.createServer(apiOptions.ssl, app).listen(apiPort);
-		} else { // http
-			var http = require('http');
-			apiServer = http.createServer(app).listen(apiPort);
-		}
-	} 
+			try {
+				var https = require('https');
 
-	if(socketOptions) {
-		if(socketOptions.port) {
-			if(socketOptions.port && !isNaN(socketOptions.port)) {
-				socketPort = socketOptions.port;
+				// read ssl files
+				var sslOptions = apiOptions.ssl;
+
+				if(sslOptions.crt && sslOptions.key) {
+					sslOptions = readConfigFile('crt', sslOptions);
+					sslOptions = readConfigFile('key', sslOptions);
+					sslOptions = readConfigFile('ca', sslOptions);
+
+					apiServer = https.createServer(sslOptions, app).listen(apiOptions.port);
+				} else {
+					throw new Error('An SSL certifcate and private key is requried for HTTPS!!');
+				}
+			} catch (err) {
+				throw err;
+			}
+		} else { // http
+			try {
+				var http = require('http');
+				apiServer = http.createServer(app).listen(apiOptions.port);
+
+			} catch (err) {
+				throw err;
 			}
 		}
 
-		if(socketOptions.ssl) {
-			socketSSL = socketOptions.ssl;
+		console.log(`${(new Date())} API Hook Server is listening on port ${apiOptions.port}`);
+	} 
+
+	// socket server options
+	if(socketOptions) {
+		if(socketOptions.port) {
+			if(socketOptions.port && isNaN(socketOptions.port)) {
+				throw new Error('Socket server port must be numerical!!');
+			}
+		} else {
+			socketOptions.port = defaultSocketPort;
 		}
 	}
 
 	// socket server
-	var socketConfig = { port: socketPort };
+	var socketConfig = { port: socketOptions.port };
 
-	if(socketSSL) {
-		socketConfig.ssl = socketSSL;
+	if(socketOptions.ssl) {
+		socketConfig.ssl = socketOptions.ssl;
 	}
 
-	socketServer = wicker.createSocketServer(socketConfig);
+	try {
+		socketServer = wicker.createSocketServer(socketConfig);
+	} catch(err) {
+		throw err;
+	}
 
-	app.use('/',router);
+	app.use('/', router);
 
-	return { socketServer: { wicker:wicker, server:socketServer }, router: router };
+	return { socketServer: { wicker: wicker, server: socketServer }, router: router };
 }

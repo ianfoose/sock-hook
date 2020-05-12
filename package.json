@@ -1,9 +1,9 @@
 {
   "name": "sock-hook",
-  "version": "1.0.6",
+  "version": "2.0.1",
   "description": "An API hook to send data from an endpoint to a socket server.",
   "main": "sock-hook.js",
-"github":"https://github.com/ianfoose/sock-hook.git",
+  "github":"https://github.com/ianfoose/sock-hook.git",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
