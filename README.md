@@ -28,9 +28,32 @@ sock.createServer({port: 80},{port:8080});
 
 ```
 
+### Options 
+
+```json
+{
+	"api-server": {
+		"port": 80,
+		"ssl": {
+			"crt": "<path_to_cert>",
+			"key": "<path_to_key>",
+			"ca": "<path_to_ca>"
+		}
+	},
+	"socket-server": {
+		"port": 8080,
+		"ssl": {
+			"crt": "<path_to_cert>",
+			"key": "<path_to_key>",
+			"ca": "<path_to_ca>"
+		}
+	}
+}
+```
+
 ### SSL
 
-Both the API and Socket Server have the ability to use https.  
+Both the API and Socket Server have the ability to use https.
 
 The same or different ssl credentials can be used for both.
 
@@ -42,12 +65,12 @@ var fs = require('fs');
 
 // ssl file options
 var options = {
-  crt: fs.readFileSync('<path_to_crt>.crt','utf8'),
-  key: fs.readFileSync('<path_to_key>.key','utf8')
+  crt: <path_to_crt>,
+  key: <path_to_key>
 }
 
 // first object is api config, second is socket server config
-sock.createServer({port: 80, ssl: options}, {port:8080, ssl:options});
+sock.createServer({port: 80, ssl: options}, {port: 8080, ssl: options});
 ```
 
 ### Routes
