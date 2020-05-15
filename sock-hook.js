@@ -14,7 +14,7 @@ config options:
 	"socket_server": {
 		"port": 8080,
 		"ssl": {
-			"crt": "",
+			"cert": "",
 			"key": "",
 			"ca": "<optional>"
 		}
@@ -22,9 +22,10 @@ config options:
 	"api_server": {
 		"port": 80,
 		"ssl": {
-			"crt": "",
+			"cert": "",
 			"key": "",
-			"ca": "<optional>"
+			"ca": "<optional>",
+			<express SSL options>...
 		}
 	}
 }
@@ -80,6 +81,21 @@ module.exports.createServer = function(options) {
 			apiOptions.port = defaultAPIPort;
 		}
 
+		if(apiOptions.cors) {
+			var cors = require('cors');
+
+			var corsOptions = {
+				origin: (origin, callback) => {
+					if(apiOptions['cors'].indexOf(origin) !== -1) {
+						callback(null, true);
+					} else {
+						callback(new Error('Not Allowed by CORS!!'));
+					}
+				},
+				optionsSuccessStatus: 200 // legacy support
+			}
+		}
+
 		if(apiOptions.ssl) { // https
 			try {
 				var https = require('https');
@@ -88,9 +104,17 @@ module.exports.createServer = function(options) {
 				var sslOptions = apiOptions.ssl;
 
 				if(sslOptions.crt && sslOptions.key) {
-					sslOptions = readConfigFile('crt', sslOptions);
-					sslOptions = readConfigFile('key', sslOptions);
-					sslOptions = readConfigFile('ca', sslOptions);
+					if(sslOptions['cert'].includes('.crt') || sslOptions['cert'].includes('.pem')) {
+						sslOptions = readConfigFile('cert', sslOptions);
+					}
+
+					if(sslOptions['key'].includes('.key')) {
+						sslOptions = readConfigFile('key', sslOptions);
+					}
+
+					if(sslOptions['ca'].includes('.crt') || sslOptions['ca'].includes('.pem')) {
+						sslOptions = readConfigFile('ca', sslOptions);
+					}
 
 					apiServer = https.createServer(sslOptions, app).listen(apiOptions.port);
 				} else {
