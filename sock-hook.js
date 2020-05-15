@@ -11,7 +11,7 @@ Copyright 2018 Ian Foose, Foose Industries.
 config options:
 
 {
-	"socket_server": {
+	"socket-server": {
 		"port": 8080,
 		"ssl": {
 			"cert": "",
@@ -19,8 +19,9 @@ config options:
 			"ca": "<optional>"
 		}
 	},
-	"api_server": {
+	"api-server": {
 		"port": 80,
+		"cors": ["*"],
 		"ssl": {
 			"cert": "",
 			"key": "",
@@ -45,8 +46,8 @@ module.exports.createServer = function(options) {
 	var defaultAPIPort = 80;
 
 	// server options
-	var socketOptions = options['socket_server'] || { port: defaultSocketPort };
-	var apiOptions = options['api_server'] || { port: defaultAPIPort };
+	var socketOptions = options['socket-server'] || { port: defaultSocketPort };
+	var apiOptions = options['api-server'] || { port: defaultAPIPort };
 
 	// servers
 	var apiServer;
