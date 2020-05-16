@@ -128,7 +128,6 @@ module.exports.createServer = function(options) {
 			try {
 				var http = require('http');
 				apiServer = http.createServer(app).listen(apiOptions.port);
-
 			} catch (err) {
 				throw err;
 			}
