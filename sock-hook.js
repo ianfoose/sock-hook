@@ -104,7 +104,7 @@ module.exports.createServer = function(options) {
 				// read ssl files
 				var sslOptions = apiOptions.ssl;
 
-				if(sslOptions.crt && sslOptions.key) {
+				if(sslOptions.cert && sslOptions.key) {
 					if(sslOptions['cert'].includes('.crt') || sslOptions['cert'].includes('.pem')) {
 						sslOptions = readConfigFile('cert', sslOptions);
 					}
